@@ -1,0 +1,66 @@
+{
+    "null": {
+        "metadata": {
+            "context_name": null,
+            "end_time": "2025-03-31 16:35:18.587588",
+            "start_time": "2025-03-31 16:35:18.491903",
+            "status": "ok",
+            "termination_condition": "optimal",
+            "time_elapsed": "0:00:00.095685"
+        },
+        "pool_config": {
+            "abs_tolerance": 0.0,
+            "max_pool_size": null,
+            "objective": null,
+            "policy": "keep_best",
+            "rel_tolerance": null
+        },
+        "solutions": {
+            "0": {
+                "id": 0,
+                "objectives": [
+                    {
+                        "name": null,
+                        "suffix": {},
+                        "value": 6.125
+                    }
+                ],
+                "suffix": {},
+                "variables": [
+                    {
+                        "discrete": false,
+                        "fixed": false,
+                        "index": 0,
+                        "name": "ab[0].x",
+                        "suffix": {},
+                        "value": 2.0
+                    },
+                    {
+                        "discrete": false,
+                        "fixed": false,
+                        "index": 1,
+                        "name": "ab[0].w",
+                        "suffix": {},
+                        "value": 0.0
+                    },
+                    {
+                        "discrete": false,
+                        "fixed": false,
+                        "index": 2,
+                        "name": "ab[0].y",
+                        "suffix": {},
+                        "value": 1.0
+                    },
+                    {
+                        "discrete": false,
+                        "fixed": false,
+                        "index": 3,
+                        "name": "ab[0].g",
+                        "suffix": {},
+                        "value": -0.0
+                    }
+                ]
+            }
+        }
+    }
+}

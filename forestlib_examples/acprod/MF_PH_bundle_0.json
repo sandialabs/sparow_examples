@@ -1,0 +1,109 @@
+{
+    "args": {
+        "LF": 2,
+        "model_weight": {
+            "HF": 1.0,
+            "LF": 1.0
+        },
+        "seed": 1234567890
+    },
+    "bundles": {
+        "HF_HighHigh": {
+            "probability": 0.25,
+            "scenario_probability": {
+                "('HF', 'HighHigh')": 0.3333333333333333,
+                "('LF', 'LowHigh')": 0.3333333333333333,
+                "('LF', 'LowLow')": 0.3333333333333333
+            },
+            "scenarios": [
+                [
+                    "HF",
+                    "HighHigh"
+                ],
+                [
+                    "LF",
+                    "LowHigh"
+                ],
+                [
+                    "LF",
+                    "LowLow"
+                ]
+            ]
+        },
+        "HF_HighLow": {
+            "probability": 0.25,
+            "scenario_probability": {
+                "('HF', 'HighLow')": 0.3333333333333333,
+                "('LF', 'HighLow')": 0.3333333333333333,
+                "('LF', 'LowHigh')": 0.3333333333333333
+            },
+            "scenarios": [
+                [
+                    "HF",
+                    "HighLow"
+                ],
+                [
+                    "LF",
+                    "HighLow"
+                ],
+                [
+                    "LF",
+                    "LowHigh"
+                ]
+            ]
+        },
+        "HF_LowHigh": {
+            "probability": 0.25,
+            "scenario_probability": {
+                "('HF', 'LowHigh')": 0.3333333333333333,
+                "('LF', 'HighHigh')": 0.3333333333333333,
+                "('LF', 'LowHigh')": 0.3333333333333333
+            },
+            "scenarios": [
+                [
+                    "HF",
+                    "LowHigh"
+                ],
+                [
+                    "LF",
+                    "HighHigh"
+                ],
+                [
+                    "LF",
+                    "LowHigh"
+                ]
+            ]
+        },
+        "HF_LowLow": {
+            "probability": 0.25,
+            "scenario_probability": {
+                "('HF', 'LowLow')": 0.3333333333333333,
+                "('LF', 'HighHigh')": 0.3333333333333333,
+                "('LF', 'LowLow')": 0.3333333333333333
+            },
+            "scenarios": [
+                [
+                    "HF",
+                    "LowLow"
+                ],
+                [
+                    "LF",
+                    "HighHigh"
+                ],
+                [
+                    "LF",
+                    "LowLow"
+                ]
+            ]
+        }
+    },
+    "models": [
+        "HF",
+        "LF"
+    ],
+    "scheme": "mf_random",
+    "weights": {
+        "HF": 1.0,
+        "LF": 1.0
+    }
+}
