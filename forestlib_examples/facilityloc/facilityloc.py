@@ -22,6 +22,7 @@ app_data["c"] = [
     [8650.40, 7539.055, 4539.72, 15024.325],
 ]  # servicing costs
 app_data["k"] = [1550, 650, 1750]  # facility capacity
+app_data["num_HF"] = 10
 
 customer_demand = {
     "San_Antonio_TX": [450, 650, 887],
@@ -232,7 +233,6 @@ def MFrandom_facilityloc():
         scheme="mf_random",
         LF=2,
         seed=1234567890,
-        model_weight={"HF": 1.0, "LF": 1.0},
     )
     return sp
 
@@ -249,7 +249,6 @@ def MFdissimilar_facilityloc():
         scheme="mf_kmeans_dissimilar",
         LF=2,
         seed=1234567890,
-        model_weight={"HF": 1.0, "LF": 1.0},
     )
     return sp
 
@@ -266,6 +265,107 @@ def MFsimilar_facilityloc():
         scheme="mf_kmeans_similar",
         LF=2,
         seed=1234567890,
-        model_weight={"HF": 1.0, "LF": 1.0},
+    )
+    return sp
+
+def MFsimilar_HFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_kmeans_similar",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 3.0, "LF": 1.0},
+    )
+    return sp
+
+def MFsimilar_LFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_kmeans_similar",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 1.0, "LF": 3.0},
+    )
+    return sp
+
+def MFdissimilar_HFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_kmeans_dissimilar",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 3.0, "LF": 1.0},
+    )
+    return sp
+
+def MFdissimilar_LFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_kmeans_dissimilar",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 1.0, "LF": 3.0},
+    )
+    return sp
+
+def MFrandom_HFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_random",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 3.0, "LF": 3.0},
+    )
+    return sp
+
+def MFrandom_LFweighted_facilityloc():
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(
+        scheme="mf_random",
+        LF=2,
+        seed=1234567890,
+        model_weight={"HF": 1.0, "LF": 3.0},
     )
     return sp
