@@ -1,40 +1,89 @@
 import pytest
 import pyomo.environ as pyo
-from forestlib.sp import stochastic_program
-import forestlib_examples.newsvendor as newsvendor
+
+from forestlib.sp.examples import (
+    LF_newsvendor,
+    HF_newsvendor,
+    MFrandom_newsvendor,
+    simple_newsvendor,
+)
+from forestlib.ef import ExtensiveFormSolver
+
+import pyomo.opt
+from pyomo.common import unittest
+
+solvers = set(pyomo.opt.check_available_solvers("glpk", "gurobi"))
+# solvers = ["glpk"] if "glpk" in solvers else ["gurobi"]
 
 
-class TestNewsVendor:
-    """
-    Test the news vendor application
+@unittest.pytest.mark.parametrize("mip_solver", solvers)
+class TestEFNewsvendor:
 
-    See https://stoprog.org/sites/default/files/SPTutorial/TutorialSP.pdf
-    """
+    def test_simple(self, mip_solver):
+        sp = simple_newsvendor()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve(sp)
+        results_dict = results.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
 
-    def test_single_builder(self):
-        sp = newsvendor.newsvendor_sp()
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(76.5)
+        x = soln["variables"][0]["value"]
+        assert x == pytest.approx(60.0)
 
-        assert sp.get_objective_coef(0) == 0
+    def test_simple_return_EF(self, mip_solver):
+        sp = simple_newsvendor()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve_and_return_EF(sp)
+        results_dict = results.solutions.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
 
-        assert set(sp.bundles.keys()) == {"1", "2", "3", "4", "5"}
-        assert sp.bundles["1"].probability == 0.2
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(76.5)
+        x = soln["variables"][0]["value"]
+        assert x == pytest.approx(60.0)
 
-        #
-        # Testing internal data structures
-        #
-        M1 = sp.create_subproblem("1")
-        assert set(sp.int_to_FirstStageVar.keys()) == {"1"}
-        assert sp.varcuid_to_int == {pyo.ComponentUID("x"): 0}
+        assert obj_val == pytest.approx(pyo.value(results.model.obj))
+        assert x == pytest.approx(pyo.value(results.model.rootx[0]))
 
-        M2 = sp.create_subproblem("2")
-        assert set(sp.int_to_FirstStageVar.keys()) == {"1", "2"}
-        assert sp.varcuid_to_int == {pyo.ComponentUID("x"): 0}
+    def test_LF(self, mip_solver):
+        sp = LF_newsvendor()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve(sp)
+        results_dict = results.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
 
-        #
-        # Test subproblem solver logic
-        #
-        sp.solve(M1, solver="glpk")
-        assert pyo.value(M1.s[None, 1].x) == 15.0
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(80.01)
+        x = soln["variables"][0]["value"]
+        assert x == pytest.approx(72.0)
 
-        sp.solve(M2, solver="glpk")
-        assert pyo.value(M2.s[None, 2].x) == 60.0
+    def test_HF(self, mip_solver):
+        sp = HF_newsvendor()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve(sp)
+        results_dict = results.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
+
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(82.335)
+        x = soln["variables"][0]["value"]
+        assert x == pytest.approx(54.0)
+
+    def test_MFrandom(self, mip_solver):
+        sp = MFrandom_newsvendor()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve(sp)
+        results_dict = results.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
+
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(81.3525)
+        # WEH - The optimal x value is not unique, so we don't test its value
+        # x = soln["variables"][0]["value"]
+        # assert x == pytest.approx(60.0)
