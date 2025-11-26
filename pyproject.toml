@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name="forestlib_examples"
 version="1.0"
-dependencies = ["forestlib"]
+dependencies = []
 readme = {file = "README.md", content-type = "text/plain"}
 description="A library of stochastic programming examples using forestlib"
 classifiers=[
