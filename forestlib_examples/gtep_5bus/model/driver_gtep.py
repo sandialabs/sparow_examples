@@ -1,5 +1,5 @@
 import argparse
-import pyomo.environ as pyo
+
 from forestlib.sp import stochastic_program
 from forestlib.ef import ExtensiveFormSolver
 from forestlib.ph import ProgressiveHedgingSolver
@@ -7,16 +7,16 @@ from forestlib.ph import ProgressiveHedgingSolver
 from gtep_model import ExpansionPlanningModel
 from gtep_data import ExpansionPlanningData
 #from gtep_solution import ExpansionPlanningSolution
-from pyomo.core import TransformationFactory
 
-#start_time = time.time()
+import pyomo.environ as pyo
+from pyomo.core import TransformationFactory
 
 app_data = {"stages": 2, "num_reps": 2, "len_reps": 24, "num_commit": 24, "num_dispatch": 1}
 model_data = {"scenarios": [{"ID": "scen_0", "Demand": 1.0, "Probability": 1.0}]}
 
 
 def model_builder(data, args):
-    data_path = "./5bus_copy"
+    data_path = "./data"
     data_object = ExpansionPlanningData()
     data_object.load_prescient(data_path)
     # data_object.load_storage_csv(data_path)
@@ -58,8 +58,7 @@ def model_builder(data, args):
 # options to solve model with PH or EF:
 #
 
-### I'm making a change now so that you won't have to specify .binary_indicator_var for the first-stage variables! -R
-def initial_gtep():
+def create_stochastic_program():
     sp = stochastic_program(
         first_stage_variables=[
             "investmentStage[*].renewableOperational[*]",
