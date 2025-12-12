@@ -1,0 +1,25 @@
+import pytest
+
+from forestlib.ef import ExtensiveFormSolver
+
+import pyomo.opt
+from pyomo.common import unittest
+
+solvers = set(pyomo.opt.check_available_solvers("gurobi"))
+
+from forestlib_examples.gtep_5bus.dummy import create_sp
+
+@unittest.pytest.mark.parametrize("mip_solver", solvers)
+class Test_dummy:
+
+    def test(self, mip_solver):
+        sp = create_sp()
+        solver = ExtensiveFormSolver()
+        solver.set_options(solver=mip_solver)
+        results = solver.solve(sp)
+        results_dict = results.to_dict()
+        soln = next(iter(results_dict[None]["solutions"].values()))
+
+        obj_val = soln["objectives"][0]["value"]
+        assert obj_val == pytest.approx(285632.11, 0.01)
+

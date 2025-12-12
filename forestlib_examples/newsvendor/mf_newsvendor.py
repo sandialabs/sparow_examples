@@ -1,7 +1,6 @@
 import pyomo.environ as pyo
 from forestlib.sp import stochastic_program
 
-
 #
 # Data for a simple newsvendor example
 #
@@ -9,21 +8,21 @@ app_data = dict(c=1.0, b=1.5, h=0.1)
 model_data = {
     "LF": {
         "scenarios": [
-            {"ID": 1, "d": 15},
-            {"ID": 2, "d": 60},
-            {"ID": 3, "d": 72},
-            {"ID": 4, "d": 78},
-            {"ID": 5, "d": 82},
+            {"ID": "1", "d": 15, "Probability": 0.1},
+            {"ID": "2", "d": 60, "Probability": 0.2},
+            {"ID": "3", "d": 72, "Probability": 0.1},
+            {"ID": "4", "d": 78, "Probability": 0.3},
+            {"ID": "5", "d": 82, "Probability": 0.3},
         ]
     },
     "HF": {
         "data": {"B": 0.9},
         "scenarios": [
-            {"ID": 1, "d": 15, "C": 1.4},
-            {"ID": 2, "d": 60, "C": 1.3},
-            {"ID": 3, "d": 72, "C": 1.2},
-            {"ID": 4, "d": 78, "C": 1.1},
-            {"ID": 5, "d": 82, "C": 1.0},
+            {"ID": "1", "d": 15, "C": 1.4, "Probability": 0.05},
+            {"ID": "2", "d": 60, "C": 1.3, "Probability": 0.4},
+            {"ID": "3", "d": 72, "C": 1.2, "Probability": 0.1},
+            {"ID": "4", "d": 78, "C": 1.1, "Probability": 0.35},
+            {"ID": "5", "d": 82, "C": 1.0, "Probability": 0.1},
         ],
     },
 }
@@ -74,30 +73,47 @@ def HF_builder(data, args):
     return M
 
 
+def HF_newsvendor():
+    """
+    A 'high fidelity' newsvendor example adapted from
+
+    A Tutorial on Stochastic Programming
+    Alexander Shapiro∗ and Andy Philpott†
+    March 21, 2007
+    https://www.epoc.org.nz/papers/ShapiroTutorialSP.pdf
+
+    This model includes one additional constraint, using data values 'B' and 'C'.
+    """
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    return sp
+
+
 def LF_newsvendor():
     """
-    Test the multi-fidelity news vendor application
+    A 'low fidelity' newsvendor example adapted from
 
-    See https://stoprog.org/sites/default/files/SPTutorial/TutorialSP.pdf
+    A Tutorial on Stochastic Programming
+    Alexander Shapiro∗ and Andy Philpott†
+    March 21, 2007
+    https://www.epoc.org.nz/papers/ShapiroTutorialSP.pdf
     """
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
     sp.initialize_model(
-            name="LF", model_builder=LF_builder, model_data=model_data["LF"]
-        )
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder
+    )
     return sp
 
-def HF_newsvendor():
-    sp = stochastic_program(first_stage_variables=["x"])
-    sp.initialize_application(app_data=app_data)
-    sp.initialize_model(
-        name="HF", model_builder=HF_builder, model_data=model_data["HF"]
-        )
-    return sp
 
-def MF_newsvendor1():
+def MFrandom_newsvendor():
     """
-    MF newsvendor with paired bundles
+    A multi-fidelity newsvendor example.  This example includes both low-
+    and high-fidelity scenarios that are bundled using the 'random'
+    bundling scheme.
     """
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -105,52 +121,30 @@ def MF_newsvendor1():
         name="HF", model_data=model_data["HF"], model_builder=HF_builder
     )
     sp.initialize_model(
-        name="LF",
-        model_data=model_data["LF"],
-        model_builder=LF_builder,
-        default=False,
-    )
-    sp.initialize_bundles(scheme="mf_paired")
-    return sp
-
-def MF_newsvendor2():
-    """
-    MF newsvendor with random nested bundles
-    """
-    sp = stochastic_program(first_stage_variables=["x"])
-    sp.initialize_application(app_data=app_data)
-    sp.initialize_model(
-        name="HF", model_data=model_data["HF"], model_builder=HF_builder
-    )
-    sp.initialize_model(
-        name="LF",
-        model_data=model_data["LF"],
-        model_builder=LF_builder,
-        default=False,
-    )
-    sp.initialize_bundles(scheme="mf_random_nested", LF=2, seed=1234567890)
-    return sp
-
-def MF_newsvendor3():
-    """
-    MF newsvendor with random nested bundles using weights (LF=2)
-    """
-    sp = stochastic_program(first_stage_variables=["x"])
-    sp.initialize_application(app_data=app_data)
-    sp.initialize_model(
-        name="HF", model_data=model_data["HF"], model_builder=HF_builder
-    )
-    sp.initialize_model(
-        name="LF",
-        model_data=model_data["LF"],
-        model_builder=LF_builder,
-        default=False,
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
     )
     sp.initialize_bundles(
-        scheme="mf_random_nested",
+        scheme="mf_random",
         LF=2,
         seed=1234567890,
         model_weight={"HF": 2.0, "LF": 1.0},
     )
     return sp
 
+
+def MFpaired_newsvendor():
+    """
+    A multi-fidelity newsvendor example.  This example includes both low-
+    and high-fidelity scenarios that are bundled using the 'paired'
+    bundling scheme.
+    """
+    sp = stochastic_program(first_stage_variables=["x"])
+    sp.initialize_application(app_data=app_data)
+    sp.initialize_model(
+        name="HF", model_data=model_data["HF"], model_builder=HF_builder
+    )
+    sp.initialize_model(
+        name="LF", model_data=model_data["LF"], model_builder=LF_builder, default=False
+    )
+    sp.initialize_bundles(scheme="mf_paired")
+    return sp
