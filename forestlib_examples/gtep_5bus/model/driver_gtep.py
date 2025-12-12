@@ -1,32 +1,19 @@
-import argparse
-
-from forestlib.sp import stochastic_program
-from forestlib.ef import ExtensiveFormSolver
-from forestlib.ph import ProgressiveHedgingSolver
-
-from gtep_model import ExpansionPlanningModel
-from gtep_data import ExpansionPlanningData
-#from gtep_solution import ExpansionPlanningSolution
-
-import pyomo.environ as pyo
+#
+# Define the create_gtep_model() function
+#
+from pathlib import Path
 from pyomo.core import TransformationFactory
+from .gtep_model import ExpansionPlanningModel
+from .gtep_data import ExpansionPlanningData
 
-app_data = {"stages": 2, "num_reps": 2, "len_reps": 24, "num_commit": 24, "num_dispatch": 1}
-model_data = {"scenarios": [{"ID": "scen_0", "Demand": 1.0, "Probability": 1.0}]}
+current_file_dir = Path(__file__).resolve().parent
 
 
-def model_builder(data, args):
-    data_path = "./data"
+def create_gtep_model(*, num_stages, num_rep_days, len_rep_days, num_commit_p, num_disp):
+    data_path = current_file_dir / "data"
     data_object = ExpansionPlanningData()
     data_object.load_prescient(data_path)
     # data_object.load_storage_csv(data_path)
-
-    num_stages = data["stages"]
-    num_rep_days = data["num_reps"]
-    len_rep_days = data["len_reps"]
-    num_commit_p = data["num_commit"]
-    num_disp = data["num_dispatch"]
-    scenario_placeholder = data["Demand"]
 
     mod_object = ExpansionPlanningModel(
         stages=num_stages,
@@ -53,33 +40,3 @@ def model_builder(data, args):
 
     return mod_object.model
 
-
-#
-# options to solve model with PH or EF:
-#
-
-def create_stochastic_program():
-    sp = stochastic_program(
-        first_stage_variables=[
-            "investmentStage[*].renewableOperational[*]",
-            "investmentStage[*].renewableInstalled[*]",
-            "investmentStage[*].renewableRetired[*]",
-            "investmentStage[*].renewableExtended[*]",
-            "investmentStage[*].renewableDisabled[*]",
-            "investmentStage[*].genOperational[*].binary_indicator_var",
-            "investmentStage[*].genInstalled[*].binary_indicator_var",
-            "investmentStage[*].genRetired[*].binary_indicator_var",
-            "investmentStage[*].genDisabled[*].binary_indicator_var",
-            "investmentStage[*].genExtended[*].binary_indicator_var",
-            "investmentStage[*].branchOperational[*].binary_indicator_var",
-            "investmentStage[*].branchInstalled[*].binary_indicator_var", 
-            "investmentStage[*].branchRetired[*].binary_indicator_var", 
-            "investmentStage[*].branchDisabled[*].binary_indicator_var",
-            "investmentStage[*].branchExtended[*].binary_indicator_var"
-        ]
-    )
-    sp.initialize_application(app_data=app_data)
-    sp.initialize_model(
-        name="model", model_data=model_data, model_builder=model_builder
-    )
-    return sp
