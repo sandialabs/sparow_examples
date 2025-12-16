@@ -24,9 +24,9 @@ for scen in scenarios:
 
 
 module_root = string.Template("""
-# forestlib_examples.gtep_5bus.dummy
+# sparow_examples.gtep_5bus.dummy
 
-from forestlib.sp import stochastic_program
+from sparow.sp import stochastic_program
 import importlib
 
 
@@ -47,7 +47,7 @@ def model_builder(data, args):
     num_commit_p = data["num_commit"]
     num_disp = data["num_dispatch"]
 
-    scenario = importlib.import_module("forestlib_examples.gtep_5bus.$name."+data['ID'])
+    scenario = importlib.import_module("sparow_examples.gtep_5bus.$name."+data['ID'])
     return scenario.create_gtep_model(
         num_stages=num_stages,
         num_rep_days=num_rep_days,

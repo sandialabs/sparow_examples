@@ -2,9 +2,9 @@ import sys
 import argparse
 import munch
 import pyomo.environ as pyo
-from forestlib.sp import stochastic_program
-from forestlib.ef import ExtensiveFormSolver
-from forestlib.ph import ProgressiveHedgingSolver
+from sparow.sp import stochastic_program
+from sparow.ef import ExtensiveFormSolver
+from sparow.ph import ProgressiveHedgingSolver
 
 
 '''

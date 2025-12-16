@@ -1,13 +1,13 @@
 import pytest
 
-from forestlib.ef import ExtensiveFormSolver
+from sparow.ef import ExtensiveFormSolver
 
 import pyomo.opt
 from pyomo.common import unittest
 
 solvers = set(pyomo.opt.check_available_solvers("gurobi"))
 
-from forestlib_examples.gtep_5bus.dummy import create_sp
+from sparow_examples.gtep_5bus.dummy import create_sp
 
 @unittest.pytest.mark.parametrize("mip_solver", solvers)
 class Test_dummy:

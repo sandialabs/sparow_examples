@@ -1,4 +1,4 @@
-name: forest_examples_dev
+name: sparow_examples_dev
 channels:
   - conda-forge
   - https://repo.anaconda.com/pkgs/main

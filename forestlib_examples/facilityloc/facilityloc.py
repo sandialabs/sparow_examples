@@ -2,7 +2,7 @@ import pyomo.environ as pyo
 import itertools
 import math
 import random
-from forestlib.sp import stochastic_program
+from sparow.sp import stochastic_program
 
 """
 CAPACITATED FACILITY LOCATION
