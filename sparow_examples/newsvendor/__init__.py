@@ -1,4 +1,4 @@
-# forestlib_examples/newsvendor
+# sparow_examples/newsvendor
 
 from .mf_newsvendor import (
     LF_newsvendor,

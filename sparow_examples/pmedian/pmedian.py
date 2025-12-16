@@ -2,7 +2,7 @@ import pyomo.environ as pyo
 import json
 import math
 import random
-from forestlib.sp import stochastic_program
+from sparow.sp import stochastic_program
 
 """
 CAPACITATED P-MEDIAN
@@ -16,18 +16,18 @@ CAPACITATED P-MEDIAN
 
 app_data = {"n": 100, "t": 100}  # number of facilities & customers
 
-with open('../forestlib_examples/forestlib_examples/facilityloc/distances.json', 'r') as distances_file:
+with open('../sparow_examples/sparow_examples/facilityloc/distances.json', 'r') as distances_file:
     app_data["w"] = json.load(distances_file)
 
-with open('../forestlib_examples/forestlib_examples/facilityloc/capacities.json', 'r') as capacities_file:
+with open('../sparow_examples/sparow_examples/facilityloc/capacities.json', 'r') as capacities_file:
     app_data["c"] = json.load(capacities_file)
 
 app_data["p"] = 40   # p-value
 
-with open('../forestlib_examples/forestlib_examples/facilityloc/facility_opening_costs.json', 'r') as fcosts_file:
+with open('../sparow_examples/sparow_examples/facilityloc/facility_opening_costs.json', 'r') as fcosts_file:
     app_data["f"] = json.load(fcosts_file)
 
-with open('../forestlib_examples/forestlib_examples/facilityloc/demands.json', 'r') as demands_file:
+with open('../sparow_examples/sparow_examples/facilityloc/demands.json', 'r') as demands_file:
     customer_demand_list = json.load(demands_file)
 
 HFscens_list = []  # list of HF scenarios
@@ -40,7 +40,7 @@ for scen_idx, scen in enumerate(customer_demand_list):
         }
     )
 
-with open('../forestlib_examples/forestlib_examples/facilityloc/LF_demands.json', 'r') as LF_demands_file:
+with open('../sparow_examples/sparow_examples/facilityloc/LF_demands.json', 'r') as LF_demands_file:
     LF_demand_list = json.load(LF_demands_file)
 LFscens_list = []  # list of LF scenarios
 for d_list_idx, d_list in enumerate(LF_demand_list):

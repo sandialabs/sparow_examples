@@ -3,11 +3,11 @@ requires = ["setuptools >= 64"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name="forestlib_examples"
+name="sparow_examples"
 version="1.0"
 dependencies = []
 readme = {file = "README.md", content-type = "text/plain"}
-description="A library of stochastic programming examples using forestlib"
+description="A library of stochastic programming examples using sparow"
 classifiers=[
         "Intended Audience :: End Users/Desktop",
         "Intended Audience :: Science/Research",
