@@ -42,7 +42,7 @@ def builder(data, args):
 def simple_newsvendor():
     """
     Newsvendor example adapted from
-    
+
     A Tutorial on Stochastic Programming
     Alexander Shapiro∗ and Andy Philpott†
     March 21, 2007

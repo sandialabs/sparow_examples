@@ -9,9 +9,11 @@ solvers = set(pyomo.opt.check_available_solvers("gurobi"))
 
 try:
     from sparow_examples.gtep_5bus.dummy import create_sp
-    dummy_available=True
+
+    dummy_available = True
 except:
-    dummy_available=False
+    dummy_available = False
+
 
 @unittest.pytest.mark.parametrize("mip_solver", solvers)
 class Test_dummy:
@@ -26,4 +28,3 @@ class Test_dummy:
 
         obj_val = soln["objectives"][0]["value"]
         assert obj_val == pytest.approx(285632.11, 0.01)
-
