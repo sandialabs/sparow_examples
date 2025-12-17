@@ -104,7 +104,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: or-fusion/sparow
-          token: ${{ secrets.PAT_FOR_OR_TOPAS }}
+          token: ${{ secrets.PAT_FOR_OR_SPAROW }}
           path: './sparow'
 
       - name: Install sparow
