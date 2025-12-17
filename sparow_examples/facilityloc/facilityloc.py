@@ -212,6 +212,7 @@ def HF_facilityloc():
     )
     return sp
 
+
 def LF_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -219,6 +220,7 @@ def LF_facilityloc():
         name="LF", model_data=model_data["LF"], model_builder=LF_builder
     )
     return sp
+
 
 def MFrandom_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
@@ -236,6 +238,7 @@ def MFrandom_facilityloc():
     )
     return sp
 
+
 def MFdissimilar_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -252,6 +255,7 @@ def MFdissimilar_facilityloc():
     )
     return sp
 
+
 def MFsimilar_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -267,6 +271,7 @@ def MFsimilar_facilityloc():
         seed=1234567890,
     )
     return sp
+
 
 def MFsimilar_HFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
@@ -285,6 +290,7 @@ def MFsimilar_HFweighted_facilityloc():
     )
     return sp
 
+
 def MFsimilar_LFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -301,6 +307,7 @@ def MFsimilar_LFweighted_facilityloc():
         model_weight={"HF": 1.0, "LF": 3.0},
     )
     return sp
+
 
 def MFdissimilar_HFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
@@ -319,6 +326,7 @@ def MFdissimilar_HFweighted_facilityloc():
     )
     return sp
 
+
 def MFdissimilar_LFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -336,6 +344,7 @@ def MFdissimilar_LFweighted_facilityloc():
     )
     return sp
 
+
 def MFrandom_HFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
     sp.initialize_application(app_data=app_data)
@@ -352,6 +361,7 @@ def MFrandom_HFweighted_facilityloc():
         model_weight={"HF": 3.0, "LF": 3.0},
     )
     return sp
+
 
 def MFrandom_LFweighted_facilityloc():
     sp = stochastic_program(first_stage_variables=["x"])
