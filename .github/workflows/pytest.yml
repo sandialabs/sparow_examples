@@ -1,15 +1,14 @@
 name: Pytest Tests
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Auto Format Python Code"] # name of triggering workflow
+    types:
+      - completed
 
 jobs:
   tests:
+    if: ${{ github.event.workflow.run.conclusion == 'success' }}
     strategy:
       fail-fast: false  # If one job fails, the rest will still run
       matrix:
