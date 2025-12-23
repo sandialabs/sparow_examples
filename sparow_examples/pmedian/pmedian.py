@@ -16,18 +16,26 @@ CAPACITATED P-MEDIAN
 
 app_data = {"n": 100, "t": 100}  # number of facilities & customers
 
-with open('../sparow_examples/sparow_examples/facilityloc/distances.json', 'r') as distances_file:
+with open(
+    "../sparow_examples/sparow_examples/facilityloc/distances.json", "r"
+) as distances_file:
     app_data["w"] = json.load(distances_file)
 
-with open('../sparow_examples/sparow_examples/facilityloc/capacities.json', 'r') as capacities_file:
+with open(
+    "../sparow_examples/sparow_examples/facilityloc/capacities.json", "r"
+) as capacities_file:
     app_data["c"] = json.load(capacities_file)
 
-app_data["p"] = 40   # p-value
+app_data["p"] = 40  # p-value
 
-with open('../sparow_examples/sparow_examples/facilityloc/facility_opening_costs.json', 'r') as fcosts_file:
+with open(
+    "../sparow_examples/sparow_examples/facilityloc/facility_opening_costs.json", "r"
+) as fcosts_file:
     app_data["f"] = json.load(fcosts_file)
 
-with open('../sparow_examples/sparow_examples/facilityloc/demands.json', 'r') as demands_file:
+with open(
+    "../sparow_examples/sparow_examples/facilityloc/demands.json", "r"
+) as demands_file:
     customer_demand_list = json.load(demands_file)
 
 HFscens_list = []  # list of HF scenarios
@@ -40,7 +48,9 @@ for scen_idx, scen in enumerate(customer_demand_list):
         }
     )
 
-with open('../sparow_examples/sparow_examples/facilityloc/LF_demands.json', 'r') as LF_demands_file:
+with open(
+    "../sparow_examples/sparow_examples/facilityloc/LF_demands.json", "r"
+) as LF_demands_file:
     LF_demand_list = json.load(LF_demands_file)
 LFscens_list = []  # list of LF scenarios
 for d_list_idx, d_list in enumerate(LF_demand_list):
@@ -73,8 +83,10 @@ def LF_builder(data, args):
     model.FACILITIES = pyo.Set(initialize=[j for j in range(num_facilities)])
 
     ### VARIABLES
-    model.y = pyo.Var(model.FACILITIES, bounds=[0,1]) # y[j] = 1 if facility j is open
-    model.x = pyo.Var(model.CUSTOMERS, model.FACILITIES, bounds=[0,1]) # x[i,j] = 1 if customer i serviced by facility j
+    model.y = pyo.Var(model.FACILITIES, bounds=[0, 1])  # y[j] = 1 if facility j is open
+    model.x = pyo.Var(
+        model.CUSTOMERS, model.FACILITIES, bounds=[0, 1]
+    )  # x[i,j] = 1 if customer i serviced by facility j
 
     ### CONSTRAINTS
     def ServiceAllCustomers_rule(model, i):
@@ -83,9 +95,13 @@ def LF_builder(data, args):
     model.MeetDemand = pyo.Constraint(model.CUSTOMERS, rule=ServiceAllCustomers_rule)
 
     def SufficientProduction_rule(model, j):
-        return facility_caps[j] * model.y[j] >= sum(d[i] * model.x[i,j] for i in range(num_customers))
+        return facility_caps[j] * model.y[j] >= sum(
+            d[i] * model.x[i, j] for i in range(num_customers)
+        )
 
-    model.SufficientProduction = pyo.Constraint(model.FACILITIES, rule=SufficientProduction_rule)
+    model.SufficientProduction = pyo.Constraint(
+        model.FACILITIES, rule=SufficientProduction_rule
+    )
 
     def PMedian_rule(model):
         return sum(model.y[j] for j in model.FACILITIES) == p_value
@@ -94,7 +110,10 @@ def LF_builder(data, args):
 
     ### OBJECTIVE
     def Obj_rule(model):
-        expr = sum(sum(servicing_costs[i][j] * model.x[i,j] for j in model.FACILITIES) for i in model.CUSTOMERS)
+        expr = sum(
+            sum(servicing_costs[i][j] * model.x[i, j] for j in model.FACILITIES)
+            for i in model.CUSTOMERS
+        )
         expr += sum(facility_costs[j] * model.y[j] for j in model.FACILITIES)
         return expr
 
@@ -121,8 +140,12 @@ def HF_builder(data, args):
     model.FACILITIES = pyo.Set(initialize=[j for j in range(num_facilities)])
 
     ### VARIABLES
-    model.y = pyo.Var(model.FACILITIES, within=pyo.Binary) # y[j] = 1 if facility j is open
-    model.x = pyo.Var(model.CUSTOMERS, model.FACILITIES, within=pyo.Binary) # x[i,j] = 1 if customer i serviced by facility j
+    model.y = pyo.Var(
+        model.FACILITIES, within=pyo.Binary
+    )  # y[j] = 1 if facility j is open
+    model.x = pyo.Var(
+        model.CUSTOMERS, model.FACILITIES, within=pyo.Binary
+    )  # x[i,j] = 1 if customer i serviced by facility j
 
     ### CONSTRAINTS
     def ServiceAllCustomers_rule(model, i):
@@ -131,9 +154,13 @@ def HF_builder(data, args):
     model.MeetDemand = pyo.Constraint(model.CUSTOMERS, rule=ServiceAllCustomers_rule)
 
     def SufficientProduction_rule(model, j):
-        return facility_caps[j] * model.y[j] >= sum(d[i] * model.x[i,j] for i in range(num_customers))
+        return facility_caps[j] * model.y[j] >= sum(
+            d[i] * model.x[i, j] for i in range(num_customers)
+        )
 
-    model.SufficientProduction = pyo.Constraint(model.FACILITIES, rule=SufficientProduction_rule)
+    model.SufficientProduction = pyo.Constraint(
+        model.FACILITIES, rule=SufficientProduction_rule
+    )
 
     def PMedian_rule(model):
         return sum(model.y[j] for j in model.FACILITIES) == p_value
@@ -142,7 +169,10 @@ def HF_builder(data, args):
 
     ### OBJECTIVE
     def Obj_rule(model):
-        expr = sum(sum(servicing_costs[i][j] * model.x[i,j] for j in model.FACILITIES) for i in model.CUSTOMERS)
+        expr = sum(
+            sum(servicing_costs[i][j] * model.x[i, j] for j in model.FACILITIES)
+            for i in model.CUSTOMERS
+        )
         expr += sum(facility_costs[j] * model.y[j] for j in model.FACILITIES)
         return expr
 
@@ -164,6 +194,7 @@ def HF_pmedian():
     )
     return sp
 
+
 def LF_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -171,6 +202,7 @@ def LF_pmedian():
         name="LF", model_data=model_data["LF"], model_builder=LF_builder
     )
     return sp
+
 
 def MFrandom_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
@@ -188,6 +220,7 @@ def MFrandom_pmedian():
     )
     return sp
 
+
 def MFdissimilar_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -204,6 +237,7 @@ def MFdissimilar_pmedian():
     )
     return sp
 
+
 def MFsimilar_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -219,6 +253,7 @@ def MFsimilar_pmedian():
         seed=1234567890,
     )
     return sp
+
 
 def MFsimilar_HFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
@@ -237,6 +272,7 @@ def MFsimilar_HFweighted_pmedian():
     )
     return sp
 
+
 def MFsimilar_LFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -253,6 +289,7 @@ def MFsimilar_LFweighted_pmedian():
         model_weight={"HF": 1.0, "LF": 3.0},
     )
     return sp
+
 
 def MFdissimilar_HFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
@@ -271,6 +308,7 @@ def MFdissimilar_HFweighted_pmedian():
     )
     return sp
 
+
 def MFdissimilar_LFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -288,6 +326,7 @@ def MFdissimilar_LFweighted_pmedian():
     )
     return sp
 
+
 def MFrandom_HFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])
     sp.initialize_application(app_data=app_data)
@@ -304,6 +343,7 @@ def MFrandom_HFweighted_pmedian():
         model_weight={"HF": 3.0, "LF": 3.0},
     )
     return sp
+
 
 def MFrandom_LFweighted_pmedian():
     sp = stochastic_program(first_stage_variables=["y"])

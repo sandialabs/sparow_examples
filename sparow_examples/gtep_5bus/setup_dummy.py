@@ -23,7 +23,8 @@ for scen in scenarios:
     shutil.copytree("model", dirname)
 
 
-module_root = string.Template("""
+module_root = string.Template(
+    """
 # sparow_examples.gtep_5bus.dummy
 
 from sparow.sp import stochastic_program
@@ -83,7 +84,8 @@ def create_sp():
         name="model", model_data=model_data, model_builder=model_builder
     )
     return sp
-""").substitute(name=name)
+"""
+).substitute(name=name)
 
 with open(os.path.join(name, "__init__.py"), "w") as OUTPUT:
     OUTPUT.write(module_root)

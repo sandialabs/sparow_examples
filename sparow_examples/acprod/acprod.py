@@ -7,15 +7,15 @@ from sparow.ef import ExtensiveFormSolver
 from sparow.ph import ProgressiveHedgingSolver
 
 
-'''
+"""
     THIS IS NOT WORKING YET!!!
-'''
+"""
 
 
 #
 # Data for AC production problem - reference Birge and Louveaux???
 #
-app_data = {'c': [1, 3, 0.5], 'T': 3}
+app_data = {"c": [1, 3, 0.5], "T": 3}
 
 model_data = {
     "LF": {
@@ -77,12 +77,12 @@ class ScenTree(object):
 
 
 def LF_builder(data, args):
-    c = data['c']
-    T = data['T']
+    c = data["c"]
+    T = data["T"]
     g0 = 0  # initial number of AC units stored
 
     ### STOCHASTIC DATA
-    d = data['Demand']
+    d = data["Demand"]
 
     model = pyo.ConcreteModel(data["ID"])
 
@@ -130,12 +130,12 @@ def LF_builder(data, args):
 
 
 def HF_builder(data, args):
-    c = data['c']
-    T = data['T']
+    c = data["c"]
+    T = data["T"]
     g0 = 0  # initial number of AC units stored
 
     ### STOCHASTIC DATA
-    d = data['Demand']
+    d = data["Demand"]
 
     model = pyo.ConcreteModel(data["ID"])
 
