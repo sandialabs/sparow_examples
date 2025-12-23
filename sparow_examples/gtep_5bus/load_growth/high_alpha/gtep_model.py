@@ -113,7 +113,7 @@ class ExpansionPlanningModel:
             # representative periods
             m.data_list = self.data.representative_data
             ##TEXAS: testing this for proper scaling
-            #for data in m.data_list:
+            # for data in m.data_list:
             #    scale_ModelData_to_pu(data)
             m.md = m.data_list[0]
             m.data = self.data
@@ -1091,8 +1091,9 @@ def add_commitment_constraints(b, comm_per):
             )
         else:
             return sum(
-                    b.dispatchPeriod[disp_per].operatingCostDispatch
-                    for disp_per in b.dispatchPeriods)
+                b.dispatchPeriod[disp_per].operatingCostDispatch
+                for disp_per in b.dispatchPeriods
+            )
 
     # Define total curtailment for commitment block
     @b.Expression()
@@ -1143,7 +1144,7 @@ def commitment_period_rule(b, commitment_period):
 
     ## TODO: Redesign load scaling and allow nature of it as argument
     # Demand at each bus
-    #b.load_scaling = r_p.load_scaling[r_p.load_scaling["hour"] == b.commitmentPeriod]
+    # b.load_scaling = r_p.load_scaling[r_p.load_scaling["hour"] == b.commitmentPeriod]
     # print(b.load_scaling)
 
     if m.config["scale_texas_loads"]:
@@ -1183,11 +1184,11 @@ def commitment_period_rule(b, commitment_period):
         pass
     else:
         m.loads = {
-             m.md.data["elements"]["load"][load_n]["bus"]: m.md.data["elements"]["load"][
-                 load_n
-             ]["p_load"]["values"][commitment_period - 1]
-             for load_n in m.md.data["elements"]["load"]
-         }
+            m.md.data["elements"]["load"][load_n]["bus"]: m.md.data["elements"]["load"][
+                load_n
+            ]["p_load"]["values"][commitment_period - 1]
+            for load_n in m.md.data["elements"]["load"]
+        }
 
     ## TODO: This feels REALLY inelegant and bad.
     ## TODO: Something weird happens if I say periodLength has a unit
@@ -1516,9 +1517,9 @@ def representative_period_rule(b, representative_period):
     broken_date = list(re.split(r"[-: ]", representative_date))
     b.month = int(broken_date[1])
     b.day = int(broken_date[2])
-    #b.load_scaling = i_s.load_scaling[
+    # b.load_scaling = i_s.load_scaling[
     #    (i_s.load_scaling["month"] == b.month) & (i_s.load_scaling["day"] == b.day)
-    #]
+    # ]
 
     b.currentPeriod = representative_period
     if m.config["include_commitment"] or m.config["include_redispatch"]:
@@ -1888,7 +1889,9 @@ def model_data_references(m):
             fuelCost[gen] = m.md.data["elements"]["generator"][gen]["p_cost"]["values"][
                 1
             ]
-    m.fuelCost = Param(m.thermalGenerators, initialize=fuelCost, units=u.USD/ (u.MW*u.hr))
+    m.fuelCost = Param(
+        m.thermalGenerators, initialize=fuelCost, units=u.USD / (u.MW * u.hr)
+    )
     m.fuelCost1 = Param(
         m.thermalGenerators, initialize=fuelCost1, units=u.USD / (u.MW * u.hr)
     )
@@ -1916,7 +1919,7 @@ def model_data_references(m):
             varCost2[gen] = m.md.data["elements"]["generator"][gen]["var_ops2"]
             varCost3[gen] = m.md.data["elements"]["generator"][gen]["var_ops3"]
     m.fixedCost = Param(
-        m.generators, initialize=fixedCost,default=0, units=u.USD / (u.MW * u.hr)
+        m.generators, initialize=fixedCost, default=0, units=u.USD / (u.MW * u.hr)
     )
     m.fixedCost1 = Param(
         m.generators, initialize=fixedCost1, units=u.USD / (u.MW * u.hr)
@@ -1927,7 +1930,9 @@ def model_data_references(m):
     m.fixedCost3 = Param(
         m.generators, initialize=fixedCost3, units=u.USD / (u.MW * u.hr)
     )
-    m.varCost = Param(m.generators, initialize=varCost, default=0, units=u.USD / (u.MW * u.hr))    
+    m.varCost = Param(
+        m.generators, initialize=varCost, default=0, units=u.USD / (u.MW * u.hr)
+    )
     m.varCost1 = Param(m.generators, initialize=varCost1, units=u.USD / (u.MW * u.hr))
     m.varCost2 = Param(m.generators, initialize=varCost2, units=u.USD / (u.MW * u.hr))
     m.varCost3 = Param(m.generators, initialize=varCost3, units=u.USD / (u.MW * u.hr))

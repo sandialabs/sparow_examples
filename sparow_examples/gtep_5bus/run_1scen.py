@@ -9,13 +9,14 @@ solvers = set(pyomo.opt.check_available_solvers("gurobi"))
 
 try:
     from sparow_examples.gtep_5bus.dummy import create_sp
-    dummy_available=True
+
+    dummy_available = True
 except:
-    dummy_available=False
+    dummy_available = False
 
 sp = create_sp()
 solver = ExtensiveFormSolver()
-solver.set_options(solver='gurobi')
+solver.set_options(solver="gurobi")
 results = solver.solve(sp)
 results_dict = results.to_dict()
 
