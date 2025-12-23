@@ -1,30 +1,5 @@
-#
-# Setup a dummy gtep 5bus example
-#
-# Note that this assumes that scenarios are copied into separate directories, each of which
-# can be imported to get a function to construct the GTEP model.
-#
 
-import os
-import shutil
-import string
-
-# The example name
-name = "dummy"
-scenarios = ["scenario1"]
-
-if not os.path.exists(name):
-    os.mkdir(name)
-
-for scen in scenarios:
-    dirname = os.path.join(name, scen)
-    if os.path.exists(dirname):
-        shutil.rmtree(dirname)
-    shutil.copytree("model", dirname)
-
-
-module_root = string.Template("""
-# sparow_examples.gtep_5bus.dummy
+# sparow_examples.gtep_5bus.load_growth
 
 from sparow.sp import stochastic_program
 import importlib
@@ -37,7 +12,7 @@ app_data = {
     "num_commit": 24,
     "num_dispatch": 1,
 }
-model_data = {"scenarios": [{"ID": "scenario1", "Demand": 1.0, "Probability": 1.0}]}
+model_data = {"scenarios": [{"ID": "low_alpha", "Demand": 1.0, "Probability": 0.5,"alpha":1.0},{"ID": "high_alpha", "Demand": 1.0, "Probability": 0.5,"alpha":10.00}]}
 
 
 def model_builder(data, args):
@@ -46,15 +21,16 @@ def model_builder(data, args):
     len_rep_days = data["len_reps"]
     num_commit_p = data["num_commit"]
     num_disp = data["num_dispatch"]
-
-    scenario = importlib.import_module("sparow_examples.gtep_5bus.$name."+data['ID'])
+    alpha = data["alpha"]
+                              
+    scenario = importlib.import_module("sparow_examples.gtep_5bus.load_growth."+data['ID'])
     return scenario.create_gtep_model(
         num_stages=num_stages,
         num_rep_days=num_rep_days,
         len_rep_days=len_rep_days,
         num_commit_p=num_commit_p,
         num_disp=num_disp,
-        alpha=1.0
+        alpha= alpha
     )
 
 
@@ -83,7 +59,3 @@ def create_sp():
         name="model", model_data=model_data, model_builder=model_builder
     )
     return sp
-""").substitute(name=name)
-
-with open(os.path.join(name, "__init__.py"), "w") as OUTPUT:
-    OUTPUT.write(module_root)

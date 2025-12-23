@@ -1,29 +1,4 @@
-#
-# Setup a dummy gtep 5bus example
-#
-# Note that this assumes that scenarios are copied into separate directories, each of which
-# can be imported to get a function to construct the GTEP model.
-#
 
-import os
-import shutil
-import string
-
-# The example name
-name = "dummy"
-scenarios = ["scenario1"]
-
-if not os.path.exists(name):
-    os.mkdir(name)
-
-for scen in scenarios:
-    dirname = os.path.join(name, scen)
-    if os.path.exists(dirname):
-        shutil.rmtree(dirname)
-    shutil.copytree("model", dirname)
-
-
-module_root = string.Template("""
 # sparow_examples.gtep_5bus.dummy
 
 from sparow.sp import stochastic_program
@@ -47,7 +22,7 @@ def model_builder(data, args):
     num_commit_p = data["num_commit"]
     num_disp = data["num_dispatch"]
 
-    scenario = importlib.import_module("sparow_examples.gtep_5bus.$name."+data['ID'])
+    scenario = importlib.import_module("sparow_examples.gtep_5bus.dummy."+data['ID'])
     return scenario.create_gtep_model(
         num_stages=num_stages,
         num_rep_days=num_rep_days,
@@ -83,7 +58,3 @@ def create_sp():
         name="model", model_data=model_data, model_builder=model_builder
     )
     return sp
-""").substitute(name=name)
-
-with open(os.path.join(name, "__init__.py"), "w") as OUTPUT:
-    OUTPUT.write(module_root)

@@ -10,8 +10,8 @@ import shutil
 import string
 
 # The example name
-name = "dummy"
-scenarios = ["scenario1"]
+name = "load_growth"
+scenarios = ["low_alpha","high_alpha"]
 
 if not os.path.exists(name):
     os.mkdir(name)
@@ -24,7 +24,7 @@ for scen in scenarios:
 
 
 module_root = string.Template("""
-# sparow_examples.gtep_5bus.dummy
+# sparow_examples.gtep_5bus.load_growth
 
 from sparow.sp import stochastic_program
 import importlib
@@ -37,7 +37,7 @@ app_data = {
     "num_commit": 24,
     "num_dispatch": 1,
 }
-model_data = {"scenarios": [{"ID": "scenario1", "Demand": 1.0, "Probability": 1.0}]}
+model_data = {"scenarios": [{"ID": "low_alpha", "Demand": 1.0, "Probability": 0.5,"alpha":1.0},{"ID": "high_alpha", "Demand": 1.0, "Probability": 0.5,"alpha":10.00}]}
 
 
 def model_builder(data, args):
@@ -46,7 +46,8 @@ def model_builder(data, args):
     len_rep_days = data["len_reps"]
     num_commit_p = data["num_commit"]
     num_disp = data["num_dispatch"]
-
+    alpha = data["alpha"]
+                              
     scenario = importlib.import_module("sparow_examples.gtep_5bus.$name."+data['ID'])
     return scenario.create_gtep_model(
         num_stages=num_stages,
@@ -54,7 +55,7 @@ def model_builder(data, args):
         len_rep_days=len_rep_days,
         num_commit_p=num_commit_p,
         num_disp=num_disp,
-        alpha=1.0
+        alpha= alpha
     )
 
 
