@@ -9,7 +9,9 @@ from gtep.gtep_data import ExpansionPlanningData
 current_file_dir = Path(__file__).resolve().parent
 
 
-def create_gtep_model(*, num_stages, num_rep_days, len_rep_days, num_commit_p, num_disp, alpha=1.0):
+def create_gtep_model(
+    *, num_stages, num_rep_days, len_rep_days, num_commit_p, num_disp, alpha=1.0
+):
     data_path = current_file_dir / "data"
     data_object = ExpansionPlanningData()
     data_object.load_prescient(data_path)
@@ -25,12 +27,14 @@ def create_gtep_model(*, num_stages, num_rep_days, len_rep_days, num_commit_p, n
     )
 
     mod_object.config["include_commitment"] = True
-    mod_object.config['alpha_scaler']= alpha
+    mod_object.config["alpha_scaler"] = alpha
     mod_object.config["flow_model"] = "CP"  # change this to "DC" to run DCOPF!
     mod_object.config["storage"] = True
     mod_object.config["transmission"] = True  # TRANSMISSION INVESTMENT FLAG
     mod_object.config["thermal_generation"] = True  # THERMAL GENERATION INVESTMENT FLAG
-    mod_object.config["renewable_generation"] = True  # RENEWABLE GENERATION INVESTMENT FLAG
+    mod_object.config["renewable_generation"] = (
+        True  # RENEWABLE GENERATION INVESTMENT FLAG
+    )
     mod_object.config["scale_loads"] = False  # LEAVE AS FALSE
     mod_object.config["scale_texas_loads"] = False  # LEAVE AS FALSE
 
@@ -39,4 +43,3 @@ def create_gtep_model(*, num_stages, num_rep_days, len_rep_days, num_commit_p, n
     TransformationFactory("gdp.bigm").apply_to(mod_object.model)
 
     return mod_object.model
-

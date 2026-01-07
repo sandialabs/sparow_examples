@@ -1,4 +1,3 @@
-
 # sparow_examples.gtep_5bus.dummy
 
 from sparow.sp import stochastic_program
@@ -22,14 +21,14 @@ def model_builder(data, args):
     num_commit_p = data["num_commit"]
     num_disp = data["num_dispatch"]
 
-    scenario = importlib.import_module("sparow_examples.gtep_5bus.dummy."+data['ID'])
+    scenario = importlib.import_module("sparow_examples.gtep_5bus.dummy." + data["ID"])
     return scenario.create_gtep_model(
         num_stages=num_stages,
         num_rep_days=num_rep_days,
         len_rep_days=len_rep_days,
         num_commit_p=num_commit_p,
         num_disp=num_disp,
-        alpha=1.0
+        alpha=1.0,
     )
 
 
