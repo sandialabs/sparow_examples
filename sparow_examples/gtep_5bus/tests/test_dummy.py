@@ -24,7 +24,7 @@ class Test_dummy:
         solver.set_options(solver=mip_solver)
         results = solver.solve(sp)
         results_dict = results.to_dict()
-        soln = next(iter(results_dict[None]["solutions"].values()))
+        soln = next(iter(results_dict["solutions"].values()))
 
         obj_val = soln["objectives"][0]["value"]
-        assert obj_val == pytest.approx(285632.11, 0.01)
+        assert obj_val == pytest.approx(474175.151, 0.01)

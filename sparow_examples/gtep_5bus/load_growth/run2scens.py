@@ -15,7 +15,7 @@ except:
     dummy_available=False
 
 sp = create_sp()
-solver = ProgressiveHedgingSolver()
+solver = ExtensiveFormSolver()
 solver.set_options(solver='gurobi',loglevel='INFO')
 results = solver.solve(sp)
 results_dict = results.to_dict()
