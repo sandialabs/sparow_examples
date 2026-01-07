@@ -17,7 +17,7 @@ except:
 
 sp = create_sp()
 solver = ExtensiveFormSolver()
-solver.set_options(solver='gurobi',loglevel='INFO')
+solver.set_options(solver="gurobi", loglevel="INFO")
 results = solver.solve(sp)
 results_dict = results.to_dict()
 
