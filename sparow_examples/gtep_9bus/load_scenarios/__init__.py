@@ -3,7 +3,6 @@
 from sparow.sp import stochastic_program
 import importlib
 
-
 app_data = {
     "stages": 3,
     "num_reps": 2,
