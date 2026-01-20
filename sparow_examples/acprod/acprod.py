@@ -6,7 +6,6 @@ from sparow.sp import stochastic_program
 from sparow.ef import ExtensiveFormSolver
 from sparow.ph import ProgressiveHedgingSolver
 
-
 """
     THIS IS NOT WORKING YET!!!
 """
