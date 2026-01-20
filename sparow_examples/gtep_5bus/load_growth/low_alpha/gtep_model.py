@@ -27,7 +27,6 @@ from .config_options import (
     _add_investment_configs,
 )
 
-
 # Define what a USD is for pyomo units purposes
 # This will be set to a base year and we will do NPV calculations
 # based on automatic pyomo unit transformations
