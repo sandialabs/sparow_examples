@@ -71,7 +71,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 #from post_process_gtep_solution import post_process
 
 solvers = set(pyomo.opt.check_available_solvers("gurobi"))
-script_start = time.perf_counter()
+
 try:
     from sparow_examples.bus_123_benders.{experimental_name} import create_sp
 
@@ -83,7 +83,7 @@ except:
 relaxations = {repr(relaxations)}
 rd = {{k: v["relax_second_stage"] for k, v in relaxations.items()}}
 
-
+script_start = time.perf_counter()
 sp = create_sp()
 sp.add_transformation(relax_second_stage, relax_dict=rd)
 solver = BendersSolver()
@@ -91,15 +91,29 @@ solver = BendersSolver()
 TIME_LIMIT = 1200.0
 CONVERGENCE_TOL = 1e-3
 REL_TOL = 0.01
-MAX_ITERATIONS = 100
-ETA_LOWER_BOUND_DEFAULT = -1e8
+MAX_ITERATIONS = 1000
+ETA_LOWER_BOUND_DEFAULT = -1e6
 ITERATE_POOL_SIZE = 50
+PRINT_CUT_SNIPPETS = True
+CUT_SNIPPET_LEN = 200
 
 eta_bounds_map = {{b: (ETA_LOWER_BOUND_DEFAULT, None) for b in sp.bundles}}
 
 
 def _on_iteration(data):
+    benders = data.upper_model.benders
     n_cuts = len(data.cuts_added) if data.cuts_added is not None else 0
+    n_cut_pool = (
+        len(benders.cuts) if getattr(benders, "cuts", None) is not None else None
+    )
+    qs = None
+    if (
+        getattr(benders, "records_last_eval_results", False)
+        and benders.last_iterate_is_feasible()
+    ):
+        qs = benders.last_subproblem_etas()
+        if qs is not None and any(q is None for q in qs):
+            qs = None
     best_lb = data.best_lb
     best_ub = data.best_ub
     if best_lb is not None and best_ub is not None and abs(best_lb) > 0:
@@ -108,13 +122,24 @@ def _on_iteration(data):
     else:
         gap_str = "n/a"
     print(f"  --- Benders iteration {{data.iter_idx}} ---", flush=True)
-    print(f"      cuts_added={{n_cuts}}", flush=True)
+    print(
+        f"      cuts_added={{n_cuts}}  cut_pool_size={{n_cut_pool}}",
+        flush=True,
+    )
     print(f"      L_k={{data.L_k}}  U_k={{data.U_k}}", flush=True)
+    print(f"      Q_s={{qs}}", flush=True)
     print(
         f"      best_lower_bound={{best_lb}}  best_upper_bound={{best_ub}}  "
         f"rel_gap={{gap_str}}",
         flush=True,
     )
+    if PRINT_CUT_SNIPPETS and data.cuts_added:
+        for i, cut in enumerate(data.cuts_added):
+            text = str(cut.expr)
+            print(
+                f"      cut[{{i}}]: {{text[:CUT_SNIPPET_LEN]}}",
+                flush=True,
+            )
 
 iterate_pool = PyomoPoolManager()
 iterate_pool.add_pool(
@@ -130,13 +155,14 @@ solver.set_options(
     is_persistent_solver=True,
     allow_infeasible_subproblems=True,
     loglevel="INFO",
+    solver_options={{"TimeLimit": TIME_LIMIT, "timelimit": TIME_LIMIT}},
     rel_tol=REL_TOL,
     feasible_iterate_pool=iterate_pool,
 )
 
 print(
     f"--- Calling solve_and_return_model "
-    f"(generate_cut_tol={{CONVERGENCE_TOL}}, "
+    f"(TimeLimit={{TIME_LIMIT}}s, generate_cut_tol={{CONVERGENCE_TOL}}, "
     f"rel_tol={{REL_TOL}}, keep_latest={{ITERATE_POOL_SIZE}}) ---",
     flush=True,
 )
@@ -325,41 +351,41 @@ def create_sp():
 
 if __name__ == "__main__":
 
-    experimental_name = "worked_on_local_test"
+    experimental_name = "worked_on_local"
     case_study = "bus_123_benders"
 
-    scenarios = ["scenario_A", "scenario_B", "scenario_C"]
+    scenarios = ["scenario_A",]# "scenario_B", "scenario_C"]
 
     alpha = {
-        "scenario_A": 1.0,"scenario_B": 1.0,"scenario_C": 1.0,
+        "scenario_A": 1.0,#"scenario_B": 1.0,"scenario_C": 1.0,
     }
 
     growth_rate = 1.00
 
     num_representative_days = {
-        "scenario_A": 1,"scenario_B": 1,"scenario_C": 1
+        "scenario_A": 1,#"scenario_B": 1,"scenario_C": 1
     }
 
     power_flow_fidelity = {
-        "scenario_A": "CP","scenario_B": "CP","scenario_C": "CP"
+        "scenario_A": "CP",#"scenario_B": "CP","scenario_C": "CP"
     }
 
     relaxations = {
         "scenario_A": {"relax_second_stage": True, "unit_commitment": True},
-        "scenario_B": {"relax_second_stage": True, "unit_commitment": True},
-        "scenario_C": {"relax_second_stage": True, "unit_commitment": True},
+        #"scenario_B": {"relax_second_stage": True, "unit_commitment": True},
+        #"scenario_C": {"relax_second_stage": True, "unit_commitment": True},
     }
 
     include_commitment = {
         "scenario_A": True,
-        "scenario_B": True,
-        "scenario_C": True,
+        #"scenario_B": True,
+        #"scenario_C": True,
     }
 
     number_of_commitment = {
         "scenario_A": 1,
-        "scenario_B": 1,
-        "scenario_C": 1,
+        #"scenario_B": 1,
+        #"scenario_C": 1,
     }
 
     create_experimental_setups(
